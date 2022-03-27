@@ -46,6 +46,7 @@ jobs:
         virtualenvs-in-project: true
     -
       name: Get Python version
+      shell: bash
       run: echo "PYTHON_VERSION=$(python -c 'import platform; print(platform.python_version())')" >> $GITHUB_ENV
     - 
       name: Load cached venv
