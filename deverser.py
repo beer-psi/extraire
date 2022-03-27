@@ -2,6 +2,7 @@ import pyimg4
 import plistlib
 import getpass
 import io
+import sys
 import paramiko.ssh_exception
 import pyasn1.codec.der.decoder
 from rich import print
@@ -39,7 +40,7 @@ def main():
     raw_img4 = io.BytesIO()
     try:
         with Connection(device_addr, user="root", port=sshport, connect_kwargs={"password": password}) as c:
-            c.run("cat /dev/disk1 | dd of=dump.raw bs=256 count=$((0x4000))")
+            c.run("dd if=/dev/disk1 of=dump.raw bs=256 count=$((0x4000))")
             c.get("dump.raw", raw_img4)  
     except paramiko.ssh_exception.NoValidConnectionsError:
         print("[red]Could not connect to device![/red]")
@@ -51,7 +52,7 @@ def main():
         print("[red] - You have not disabled root login[/red]")
         return 1
     except paramiko.ssh_exception.SSHException:
-        print("[red]An SS2 error occured.[/red]")
+        print("[red]An SSH2 error occured.[/red]")
         return 1
 
     img4, _ = pyasn1.codec.der.decoder.decode(raw_img4.read())
@@ -72,4 +73,4 @@ def main():
 
 
 if __name__ == "__main__":
-    exit(main())
+    sys.exit(main())
