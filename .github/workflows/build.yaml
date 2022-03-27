@@ -130,7 +130,7 @@ jobs:
             chmod +x $asset
             artifact_label=$(python -c "import os; print(os.path.basename(os.path.abspath(os.path.join('$asset', '..'))))")
             if [ "$artifact_label" = "deverser-windows" ]; then
-              artifact_label=${artifact_label}_${version}.exe
+              artifact_label=${artifact_label}_v${version}.exe
             else
               artifact_label=${artifact_label}_${version}
             fi
