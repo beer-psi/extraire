@@ -37,20 +37,23 @@ jobs:
       name: Setup Python
       uses: actions/setup-python@v3
       with:
-        python-version: '3.7.12'
+        python-version: '3.7.9'
     - 
       name: Setup Poetry
       uses: snok/install-poetry@v1
       with:
         virtualenvs-create: true
         virtualenvs-in-project: true
+    -
+      name: Get Python version
+      run: echo "PYTHON_VERSION=$(python -c 'import platform; print(platform.python_version())')" >> $GITHUB_ENV
     - 
       name: Load cached venv
       id: cached-poetry-dependencies
       uses: actions/cache@v2
       with:
         path: .venv
-        key: virtualenv-${{ runner.os }}-${{ hashFiles('**/poetry.lock') }}
+        key: virtualenv-${{ env.PYTHON_VERSION }}-${{ runner.os }}-${{ hashFiles('**/poetry.lock') }}
     - 
       name: Installing build dependencies
       if: steps.cached-poetry-dependencies.outputs.cache-hit != 'true'
