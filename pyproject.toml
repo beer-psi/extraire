@@ -1,5 +1,5 @@
 [tool.poetry]
-name = "deverser.py"
+name = "deverser"
 version = "0.1.0"
 description = "Dump onboard SHSH blobs with a valid generator for jailbroken iOS devices"
 authors = ["beerpiss <lacvtg.a1.2023@gmail.com>"]

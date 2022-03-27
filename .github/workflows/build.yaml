@@ -4,6 +4,7 @@ on: push
 jobs:
   build:
     strategy:
+      fail-fast: false
       matrix:
         os:
         - prettyname: windows
@@ -12,6 +13,9 @@ jobs:
           fullname: macos-latest
         - prettyname: linux
           fullname: ubuntu-latest
+    defaults:
+      run:
+        shell: pwsh
     runs-on: ${{ matrix.os.fullname }}
     steps:
     -
@@ -21,26 +25,60 @@ jobs:
       name: Setup Python
       uses: actions/setup-python@v3
       with:
-        cache: 'pip'
         python-version: '3.9'
-        cache-dependency-path: 'pyproject.toml'
     - 
-      name: Installing dependencies
-      run: pip install .
+      name: Setup Poetry
+      uses: snok/install-poetry@v1
+      with:
+        virtualenvs-create: true
+        virtualenvs-in-project: true
+    - 
+      name: Load cached venv
+      id: cached-poetry-dependencies
+      uses: actions/cache@v2
+      with:
+        path: .venv
+        key: virtualenv-${{ runner.os }}-${{ hashFiles('**/poetry.lock') }}
+    - 
+      name: Installing build dependencies
+      if: steps.cached-poetry-dependencies.outputs.cache-hit != 'true'
+      run: poetry install
+    - 
+      name: Installing UPX (macOS/Windows)
+      if: matrix.os.prettyname != 'linux'
+      run: |
+        if ( "${{ matrix.os.prettyname }}" -eq "macos" ) {
+          brew install upx
+        }
+        elseif ( "${{ matrix.os.prettyname }}" -eq "windows" ) {
+          Invoke-WebRequest -Uri "https://github.com/upx/upx/releases/download/v3.96/upx-3.96-win64.zip" -OutFile upx.zip
+          Expand-Archive -LiteralPath upx.zip -DestinationPath .
+          Rename-Item upx-* upx
+        }
     -
       name: Building independent executable
+      env:
+        pythonLocation: /Library/Frameworks/Python.framework/Versions/3.9/bin
       run: | 
-        PYINSTALLER_ARGS=("--clean" "-F")
-        if [ ! "${{ matrix.os.prettyname }}" = "windows" ]; then
-          PYINSTALLER_ARGS+=("--strip")
-        fi
-        if [ "${{ matrix.os.prettyname }}" = "macos" ]; then
-          PYINSTALLER_ARGS+=("--target-architecture" "universal2")
-        fi
-        pyinstaller "${PYINSTALLER_ARGS[@]}" deverser.py pyimg4.py
+        $PYINSTALLER_ARGS = new-object 'System.Collections.Generic.List[string]'
+        $PYINSTALLER_ARGS.Add("--clean")
+        if ( "${{ matrix.os.prettyname }}" -eq "macos" ) {
+          $PYINSTALLER_ARGS.Add("--target-architecture")
+          $PYINSTALLER_ARGS.Add("x86_64")
+        }
+        if ( "${{ matrix.os.prettyname }}" -eq "windows" ) {
+          $PYINSTALLER_ARGS.Add("--upx-dir")
+          $PYINSTALLER_ARGS.Add("upx/")
+        }
+        else {
+          $PYINSTALLER_ARGS.Add("--strip")
+        }
+        $PYINSTALLER_ARGS.Add("-F")
+        Write-Output "poetry run pyinstaller $PYINSTALLER_ARGS deverser.py pyimg4.py"
+        poetry run pyinstaller $PYINSTALLER_ARGS deverser.py pyimg4.py
     - 
       name: Upload artifacts
       uses: actions/upload-artifact@v3
       with:
         name: deverser-${{ matrix.os.prettyname }}
-        path: ./dist/deverser
+        path: ./dist/*
