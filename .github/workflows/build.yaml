@@ -13,18 +13,39 @@ on:
     - released
 
 jobs:
+  check-minimum-python:
+    if: "!contains(github.event.head_commit.message, 'skip-ci') || !contains(github.ref, 'refs/tags')"
+    runs-on: ubuntu-latest
+    steps:
+    -
+      name: Checkout
+      uses: actions/checkout@v3
+    - 
+      name: Setup Python
+      uses: actions/setup-python@v3
+      with:
+        python-version: '3.10'
+    - 
+      name: Install Vermin
+      run: pip install -U vermin
+    - 
+      name: Check minimum version
+      run: vermin -t=3.6- --violations --backport typing --no-parse-comments *.py
   build:
-    if: "!contains(github.event.head_commit.message, 'skip-ci')"
+    needs: check-minimum-python
     strategy:
       fail-fast: false
       matrix:
         os:
         - prettyname: windows
           fullname: windows-latest
+          python: '3.7.9'
         - prettyname: macos
           fullname: macos-latest
+          python: '3.6.8'
         - prettyname: linux
           fullname: ubuntu-latest
+          python: '3.6.8'
     defaults:
       run:
         shell: pwsh
@@ -37,20 +58,24 @@ jobs:
       name: Setup Python
       uses: actions/setup-python@v3
       with:
-        python-version: '3.6.15'
+        python-version: ${{ matrix.os.python }}
     - 
       name: Setup Poetry
       uses: snok/install-poetry@v1
       with:
         virtualenvs-create: true
         virtualenvs-in-project: true
+    -
+      name: Get Python version
+      shell: bash
+      run: echo "PYTHON_VERSION=$(python -c 'import platform; print(platform.python_version())')" >> $GITHUB_ENV
     - 
       name: Load cached venv
       id: cached-poetry-dependencies
       uses: actions/cache@v2
       with:
         path: .venv
-        key: virtualenv-${{ runner.os }}-${{ hashFiles('**/poetry.lock') }}
+        key: virtualenv-${{ env.PYTHON_VERSION }}-${{ runner.os }}-${{ hashFiles('**/poetry.lock') }}
     - 
       name: Installing build dependencies
       if: steps.cached-poetry-dependencies.outputs.cache-hit != 'true'
