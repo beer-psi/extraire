@@ -54,7 +54,9 @@ jobs:
     - 
       name: Installing build dependencies
       if: steps.cached-poetry-dependencies.outputs.cache-hit != 'true'
-      run: poetry install
+      run: |
+        poetry install --no-dev 
+        poetry install pyinstaller
     - 
       name: Installing UPX (macOS/Windows)
       if: matrix.os.prettyname != 'linux'
