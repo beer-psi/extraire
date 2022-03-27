@@ -1,0 +1,44 @@
+name: build deverser.py
+on: push
+
+jobs:
+  build:
+    strategy:
+      matrix:
+        os:
+        - prettyname: windows
+          fullname: windows-latest
+        - prettyname: macos
+          fullname: macos-latest
+        - prettyname: linux
+          fullname: ubuntu-latest
+    runs-on: ${{ matrix.os.fullname }}
+    steps:
+    -
+      name: Checkout
+      uses: actions/checkout@v3
+    - 
+      name: Setup Python
+      uses: actions/setup-python@v3
+      with:
+        cache: 'pip'
+    - 
+      name: Installing dependencies
+      run: pip install .
+    -
+      name: Building independent executable
+      run: | 
+        PYINSTALLER_ARGS=("--clean" "-F")
+        if [ ! "${{ matrix.os.prettyname }}" = "windows" ]; then
+          PYINSTALLER_ARGS+=("--strip")
+        fi
+        if [ "${{ matrix.os.prettyname }}" = "macos" ]; then
+          PYINSTALLER_ARGS+=("--target-architecture" "universal2")
+        fi
+        pyinstaller "${PYINSTALLER_ARGS[@]}" deverser.py pyimg4.py
+    - 
+      name: Upload artifacts
+      uses: actions/upload-artifact@v3
+      with:
+        name: deverser-${{ matrix.os.prettyname }}
+        path: ./dist/deverser
