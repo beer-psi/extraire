@@ -56,7 +56,7 @@ jobs:
       if: steps.cached-poetry-dependencies.outputs.cache-hit != 'true'
       run: |
         poetry install --no-dev 
-        poetry install pyinstaller
+        poetry add nuitka
     - 
       name: Installing UPX (macOS/Windows)
       if: matrix.os.prettyname != 'linux'
@@ -74,28 +74,30 @@ jobs:
       env:
         pythonLocation: /Library/Frameworks/Python.framework/Versions/3.9/bin
       run: | 
-        $PYINSTALLER_ARGS = new-object 'System.Collections.Generic.List[string]'
-        $PYINSTALLER_ARGS.Add("--clean")
-        if ( "${{ matrix.os.prettyname }}" -eq "macos" ) {
-          $PYINSTALLER_ARGS.Add("--target-architecture")
-          $PYINSTALLER_ARGS.Add("x86_64")
-        }
-        if ( "${{ matrix.os.prettyname }}" -eq "windows" ) {
-          $PYINSTALLER_ARGS.Add("--upx-dir")
-          $PYINSTALLER_ARGS.Add("upx/")
-        }
-        else {
-          $PYINSTALLER_ARGS.Add("--strip")
-        }
-        $PYINSTALLER_ARGS.Add("-F")
-        Write-Output "poetry run pyinstaller $PYINSTALLER_ARGS deverser.py pyimg4.py"
-        poetry run pyinstaller $PYINSTALLER_ARGS deverser.py pyimg4.py
+        # $PYINSTALLER_ARGS = new-object 'System.Collections.Generic.List[string]'
+        # $PYINSTALLER_ARGS.Add("--clean")
+        # if ( "${{ matrix.os.prettyname }}" -eq "macos" ) {
+        #   $PYINSTALLER_ARGS.Add("--target-architecture")
+        #   $PYINSTALLER_ARGS.Add("x86_64")
+        # }
+        # if ( "${{ matrix.os.prettyname }}" -eq "windows" ) {
+        #   $PYINSTALLER_ARGS.Add("--upx-dir")
+        #   $PYINSTALLER_ARGS.Add("upx/")
+        # }
+        # else {
+        #   $PYINSTALLER_ARGS.Add("--strip")
+        # }
+        # $PYINSTALLER_ARGS.Add("-F")
+        # Write-Output "poetry run pyinstaller $PYINSTALLER_ARGS deverser.py pyimg4.py"
+        poetry run python -m nuitka --standalone --onefile --noinclude-pytest-mode=nofollow deverser.py
     - 
       name: Upload artifacts
       uses: actions/upload-artifact@v3
       with:
         name: deverser-${{ matrix.os.prettyname }}
-        path: ./dist/*
+        path: |
+          deverser.bin
+          deverser.exe
   upload-prerelease:
     needs: build
     runs-on: ubuntu-latest
