@@ -3,7 +3,7 @@
 <p align="center">
 <a href="https://github.com/beerpiss/deverser.py/actions"><img alt="Actions Status" src="https://github.com/beerpiss/deverser.py/actions/workflows/build.yaml/badge.svg"></a>
 <a href="https://github.com/psf/black"><img alt="Code style: black" src="https://img.shields.io/badge/code%20style-black-000000.svg"></a>
-<a href="https://github.com/beerpiss/deverser.py/blob/main/LICENSE"><img alt="License: 0BSD" src="https://img.shields.io/static/v1?label=License&message=0BSD&color=brightgreen"></a>
+<a href="https://github.com/beerpiss/deverser.py/blob/trunk/LICENSE"><img alt="License: 0BSD" src="https://img.shields.io/static/v1?label=License&message=0BSD&color=brightgreen"></a>
 <img alt="Supported Python versions: 3.6.2, 3.7, 3.8, 3.9, 3.10" src="https://img.shields.io/badge/python-3.6.2%20%7C%203.7%20%7C%203.8%20%7C%203.9%20%7C%203.10-blue">
 </p>
 
