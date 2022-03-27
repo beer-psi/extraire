@@ -4,6 +4,15 @@ import pyasn1.type.univ
 from typing import Union, Optional
 
 
+__all__ = ["get_im4m_from_img4", "get_im4r_from_img4", "get_bncn_from_im4r", "get_value_from_im4m", "endian_converter", "convert_img4_to_shsh"]
+
+
+def __remove_prefix(text: str, prefix: str) -> str:
+    if text.startswith(prefix):
+        return text[len(prefix):]
+    return text
+
+
 def get_im4m_from_img4(img4: pyasn1.type.univ.Sequence) -> pyasn1.type.univ.Sequence:
     im4m = img4[2]
     assert str(im4m[0]) == "IM4M"
@@ -63,7 +72,7 @@ def endian_converter(val: Union[bytes, str, pyasn1.type.univ.OctetString]) -> st
     """
     ba = bytearray()
     if isinstance(val, str):
-        ba = bytearray.fromhex(str.removeprefix("0x"))
+        ba = bytearray.fromhex(__remove_prefix(val, "0x"))
     else:
         ba = bytearray(val)
     ba.reverse()

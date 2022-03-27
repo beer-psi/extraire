@@ -6,7 +6,7 @@ authors = ["beerpiss <lacvtg.a1.2023@gmail.com>"]
 license = "0BSD"
 
 [tool.poetry.dependencies]
-python = "~3.9"
+python = ">=3.6.2,<3.11"
 pyasn1 = "^0.4.8"
 fabric = "^2.7.0"
 rich = "^12.0.1"
