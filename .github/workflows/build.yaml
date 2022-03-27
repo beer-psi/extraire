@@ -96,7 +96,7 @@ jobs:
   upload-prerelease:
     needs: build
     runs-on: ubuntu-latest
-    if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master' ||  github.ref == 'refs/heads/trunk' # Only upload prereleases when it gets merged to main
+    if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master' ||  github.ref == 'refs/heads/trunk' || github.event_name == 'release' # Only upload prereleases when it gets merged to main
     steps:
       - 
         name: Checkout
