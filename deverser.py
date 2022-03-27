@@ -7,7 +7,6 @@ import tempfile
 import os.path
 from rich import print
 from rich.prompt import Prompt
-from os import remove
 from sys import exit
 from fabric import Connection
 from typing import Tuple
