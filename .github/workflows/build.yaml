@@ -1,8 +1,19 @@
 name: build deverser.py
-on: push
+on:
+  push:
+    paths:
+    - '*.py'
+    - '.github/workflows/*'
+    - '*.toml'
+    - '*.lock'
+  workflow_dispatch:
+  release:
+    types:
+    - created
 
 jobs:
   build:
+    if: "!contains(github.event.head_commit.message, 'skip-ci')"
     strategy:
       fail-fast: false
       matrix:
@@ -97,9 +108,13 @@ jobs:
           path: ./artifacts
       -
         name: Get version information
+        if: github.event_name != 'release'
         run: |
           pip install toml
-          VERSION=$(python -c 'import toml; c = toml.load("pyproject.toml"); print(c["tool"]["poetry"]["version"])')+git$(date +%Y%m%d).$(git rev-parse --short HEAD)
+          VERSION=$(python -c 'import toml; c = toml.load("pyproject.toml"); print(c["tool"]["poetry"]["version"])')
+          if [ ! "${{ github.event_name }}" = "release" ]; then
+            VERSION=$VERSION+git$(date +%Y%m%d).$(git rev-parse --short HEAD)
+          fi
           echo "version=$VERSION" >> $GITHUB_ENV
       - 
         name: Creating release
@@ -113,10 +128,17 @@ jobs:
             chmod +x $asset
             artifact_label=$(python -c "import os; print(os.path.basename(os.path.abspath(os.path.join('$asset', '..'))))")
             if [ "$artifact_label" = "deverser-windows" ]; then
-              artifact_label=$artifact_label.exe
+              artifact_label=${artifact_label}_${version}.exe
+            else
+              artifact_label=${artifact_label}_${version}
             fi
             mv $asset $artifact_label
             assets+=("$artifact_label")
           done
-          echo "gh release create v$version -t 'Prerelease v$version' -n '$(git log -1 --pretty=%B)' ${assets[@]}"
-          gh release create -p v$version -t "Prerelease v$version" -n "$(git log -1 --pretty=%B)" "${assets[@]}"
+          if [ "${{ github.event_name }}" = "release" ]; then
+            echo "gh release create v$version -t "Release v$version' -n '$(git log -1 --pretty=%B)' ${assets[@]}"  
+            gh release create v$version -t "Release v$version" -n "$(git log -1 --pretty=%B)" "${assets[@]}"
+          else  
+            echo "gh release create -p v$version -t 'Prerelease v$version' -n '$(git log -1 --pretty=%B)' ${assets[@]}"
+            gh release create -p v$version -t "Prerelease v$version" -n "$(git log -1 --pretty=%B)" "${assets[@]}"
+          fi
