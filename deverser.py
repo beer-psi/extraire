@@ -77,7 +77,7 @@ def main():
             print("[red]Timed out trying to connect.[/red]")
             return 1
 
-        with open("dump.raw", "rb") as f:
+        with open(os.path.join(tmpdir, "dump.raw"), "rb") as f:
             img4, _ = pyasn1.codec.der.decoder.decode(f.read())
 
     im4m = pyimg4.get_im4m_from_img4(img4)
