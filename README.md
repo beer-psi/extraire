@@ -4,6 +4,7 @@
 <a href="https://github.com/beerpiss/deverser.py/actions"><img alt="Actions Status" src="https://github.com/beerpiss/deverser.py/actions/workflows/build.yaml/badge.svg"></a>
 <a href="https://github.com/psf/black"><img alt="Code style: black" src="https://img.shields.io/badge/code%20style-black-000000.svg"></a>
 <a href="https://github.com/beerpiss/deverser.py/blob/main/LICENSE"><img alt="License: 0BSD" src="https://img.shields.io/static/v1?label=License&message=0BSD&color=brightgreen"></a>
+<img alt="Supported Python versions: 3.6.2, 3.7, 3.8, 3.9, 3.10" src="https://img.shields.io/badge/python-3.6.2%20%7C%203.7%20%7C%203.8%20%7C%203.9%20%7C%203.10-blue">
 </p>
 
 (I need a better name, this is stolen)
@@ -25,6 +26,9 @@ OpenSSH Server installed on your jailbroken device. That's it!
 - **(macOS/Linux only)** In a terminal window, type `chmod +x ` (with a trailing space) and drag and drop the downloaded file into the terminal, then hit Enter/Return to run.
 - Drag and drop the file into the terminal (again), then hit Enter/Return to run the program.
 - You will now be guided by the program.
+
+## Ugh, I don't like standalone binaries?
+Fine. Clone this repo, install the dependencies with `poetry install` or `pip install .`, and run `python3 deverser.py`
 
 ## Credits
 [tihmstar](https://github.com/tihmstar): without his [img4tool](https://github.com/tihmstar/img4tool) code I wouldn't be able to write code for dealing with IMG4s in Python.
