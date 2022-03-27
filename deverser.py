@@ -2,6 +2,7 @@ import pyimg4
 import plistlib
 import getpass
 import io
+import paramiko.ssh_exception
 import pyasn1.codec.der.decoder
 from rich import print
 from fabric import Connection
@@ -36,9 +37,23 @@ def main():
     device_addr, password, sshport = interactive_input()
 
     raw_img4 = io.BytesIO()
-    with Connection(device_addr, user="root", port=sshport, connect_kwargs={"password": password}) as c:
-        c.run("cat /dev/disk1 | dd of=dump.raw bs=256 count=$((0x4000))")
-        c.get("dump.raw", raw_img4)  
+    try:
+        with Connection(device_addr, user="root", port=sshport, connect_kwargs={"password": password}) as c:
+            c.run("cat /dev/disk1 | dd of=dump.raw bs=256 count=$((0x4000))")
+            c.get("dump.raw", raw_img4)  
+    except paramiko.ssh_exception.NoValidConnectionsError:
+        print("[red]Could not connect to device![/red]")
+        return 1
+    except paramiko.ssh_exception.AuthenticationException:
+        print("[red]Could not authenticate with your device![/red]")
+        print("[red]Please check if:[/red]")
+        print("[red] - You entered the correct password[/red]")
+        print("[red] - You have not disabled root login[/red]")
+        return 1
+    except paramiko.ssh_exception.SSHException:
+        print("[red]An SS2 error occured.[/red]")
+        return 1
+
     img4, _ = pyasn1.codec.der.decoder.decode(raw_img4.read())
     raw_img4.close()
 
@@ -53,7 +68,8 @@ def main():
         print("[yellow]If you updated to your current version using the Settings app over-the-air, you cannot use this blob, even with a jailbreak[/yellow]")
         print("[yellow]Refer to https://ios.cfw.guide/saving-blobs/#ota-onboard-blobs for more information.[/yellow]")
         print("[yellow]Determine your blob type with https://verify.shsh.host or https://tsssaver.1conan.com/check or img4tool.[/yellow]")
+    return 0
 
 
 if __name__ == "__main__":
-    main()
+    exit(main())

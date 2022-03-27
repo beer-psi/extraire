@@ -99,7 +99,7 @@ jobs:
         name: Get version information
         run: |
           pip install toml
-          VERSION=$(python -c 'import toml; c = toml.load("pyproject.toml"); print(c["tool"]["poetry"]["version"])')+git$(date +%Y%m%d).$(git rev-parse --short HEAD)
+          VERSION=$(python -c 'import toml; c = toml.load("pyproject.toml"); print(c["tool"]["poetry"]["version"])')~git$(date +%Y%m%d).$(git rev-parse --short HEAD)
           echo "version=$VERSION" >> $GITHUB_ENV
       - 
         name: Creating release
