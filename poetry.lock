@@ -314,6 +314,14 @@ docs = ["sphinx (>=1.6.5)", "sphinx-rtd-theme"]
 tests = ["pytest (>=3.2.1,!=3.3.0)", "hypothesis (>=3.27.0)"]
 
 [[package]]
+name = "python-minifier"
+version = "2.5.0"
+description = "Transform Python source code into it's most compact representation"
+category = "dev"
+optional = false
+python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, <3.11"
+
+[[package]]
 name = "pywin32-ctypes"
 version = "0.2.0"
 description = ""
@@ -384,8 +392,8 @@ testing = ["pytest (>=4.6)", "pytest-checkdocs (>=2.4)", "pytest-flake8", "pytes
 
 [metadata]
 lock-version = "1.1"
-python-versions = ">=3.6.2, <3.11"
-content-hash = "bcd0cf0232047fc15a0ec4183943f57da5d81d110e604ef9b63cbe19e8438849"
+python-versions = ">=3.6.2,<3.11"
+content-hash = "d937ad39668b2cf090b4c5b02499665b7113ea1b6324977543cced07777db02e"
 
 [metadata.files]
 altgraph = [
@@ -612,6 +620,10 @@ pynacl = [
     {file = "PyNaCl-1.5.0-cp36-abi3-win32.whl", hash = "sha256:e46dae94e34b085175f8abb3b0aaa7da40767865ac82c928eeb9e57e1ea8a543"},
     {file = "PyNaCl-1.5.0-cp36-abi3-win_amd64.whl", hash = "sha256:20f42270d27e1b6a29f54032090b972d97f0a1b0948cc52392041ef7831fee93"},
     {file = "PyNaCl-1.5.0.tar.gz", hash = "sha256:8ac7448f09ab85811607bdd21ec2464495ac8b7c66d146bf545b0f08fb9220ba"},
+]
+python-minifier = [
+    {file = "python_minifier-2.5.0-py3-none-any.whl", hash = "sha256:8c3d6b891af5c42d57d9b21f4d30db860dcb8cdb1e22517f1350c4e906405569"},
+    {file = "python_minifier-2.5.0.tar.gz", hash = "sha256:81397b9ec5bf1690e76b358c45af4ba6fa01be2739b478d4c1362b1fcdcf790b"},
 ]
 pywin32-ctypes = [
     {file = "pywin32-ctypes-0.2.0.tar.gz", hash = "sha256:24ffc3b341d457d48e8922352130cf2644024a4ff09762a2261fd34c36ee5942"},

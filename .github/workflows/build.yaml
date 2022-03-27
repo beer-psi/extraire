@@ -37,7 +37,7 @@ jobs:
       name: Setup Python
       uses: actions/setup-python@v3
       with:
-        python-version: '3.9'
+        python-version: '3.6.15'
     - 
       name: Setup Poetry
       uses: snok/install-poetry@v1
@@ -55,8 +55,7 @@ jobs:
       name: Installing build dependencies
       if: steps.cached-poetry-dependencies.outputs.cache-hit != 'true'
       run: |
-        poetry install --no-dev 
-        poetry install pyinstaller
+        poetry install
     - 
       name: Installing UPX (macOS/Windows)
       if: matrix.os.prettyname != 'linux'
@@ -71,8 +70,6 @@ jobs:
         }
     -
       name: Building independent executable
-      env:
-        pythonLocation: /Library/Frameworks/Python.framework/Versions/3.9/bin
       run: | 
         $PYINSTALLER_ARGS = new-object 'System.Collections.Generic.List[string]'
         $PYINSTALLER_ARGS.Add("--clean")
@@ -89,7 +86,7 @@ jobs:
         }
         $PYINSTALLER_ARGS.Add("-F")
         Write-Output "poetry run pyinstaller $PYINSTALLER_ARGS deverser.py pyimg4.py"
-        poetry run pyinstaller $PYINSTALLER_ARGS deverser.py pyimg4.py
+        poetry run pyinstaller $PYINSTALLER_ARGS deverser.spec
     - 
       name: Upload artifacts
       uses: actions/upload-artifact@v3
