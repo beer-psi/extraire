@@ -82,3 +82,41 @@ jobs:
       with:
         name: deverser-${{ matrix.os.prettyname }}
         path: ./dist/*
+  upload-prerelease:
+    needs: build
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master' ||  github.ref == 'refs/heads/trunk' # Only upload prereleases when it gets merged to main
+    steps:
+      - 
+        name: Checkout
+        uses: actions/checkout@v3
+      -
+        name: Download artifacts
+        uses: actions/download-artifact@v3
+        with:
+          path: ./artifacts
+      -
+        name: Get version information
+        run: |
+          pip install toml
+          VERSION=$(python -c 'import toml; c = toml.load("pyproject.toml"); print(c["tool"]["poetry"]["version"])')+git$(date +%Y%m%d).$(git rev-parse --short HEAD)
+          echo "version=$VERSION" >> $GITHUB_ENV
+      - 
+        name: Creating release
+        env:
+          GITHUB_TOKEN: ${{ secrets.ACCESS_TOKEN }}
+          version: ${{ env.version }}
+        run: |
+          assets=()
+          for asset in ./artifacts/**/*; do
+            if [ -d "$asset" ]; then continue; fi
+            chmod +x $asset
+            artifact_label=$(python -c "import os; print(os.path.basename(os.path.abspath(os.path.join('$asset', '..'))))")
+            if [ "$artifact_label" = "deverser-windows" ]; then
+              artifact_label=$artifact_label.exe
+            fi
+            mv $asset $artifact_label
+            assets+=("$asset")
+          done
+          echo "gh release create v$version -t 'Prerelease $version' --n '$(git log -1 --pretty=%B)' ${assets[@]}"
+          gh release create -p $version -t "Prerelease $version" -n "$(git log -1 --pretty=%B)" "${assets[@]}"
