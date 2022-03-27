@@ -136,7 +136,7 @@ jobs:
             assets+=("$artifact_label")
           done
           if [ "${{ github.event_name }}" = "release" ]; then
-            echo "gh release upload v$version -t "Release v$version' -n '$(git log -1 --pretty=%B)' ${assets[@]}"  
+            echo "gh release upload v$version -t 'Release v$version' -n '$(git log -1 --pretty=%B)' ${assets[@]}"  
             gh release upload v$version -t "Release v$version" -n "$(git log -1 --pretty=%B)" "${assets[@]}"
           else  
             echo "gh release create -p v$version -t 'Prerelease v$version' -n '$(git log -1 --pretty=%B)' ${assets[@]}"
