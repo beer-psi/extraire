@@ -108,7 +108,6 @@ jobs:
           path: ./artifacts
       -
         name: Get version information
-        if: github.event_name != 'release'
         run: |
           pip install toml
           VERSION=$(python -c 'import toml; c = toml.load("pyproject.toml"); print(c["tool"]["poetry"]["version"])')
