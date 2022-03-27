@@ -88,15 +88,11 @@ def main():
 
     print(f"[green]Done! Your blob has been saved to {str(ecid)}.blob.shsh2[/green]")
     if 0x8020 <= int(pyimg4.get_value_from_im4m(im4m, "CHIP")) < 0x8900:
-        print("[yellow]Note: Your device is probably an A12+ device.[/yellow]")
         print(
-            "[yellow]If you updated to your current version using the Settings app over-the-air, you cannot use this blob, even with a jailbreak[/yellow]"
-        )
-        print(
-            "[yellow]Refer to https://ios.cfw.guide/saving-blobs/#ota-onboard-blobs for more information.[/yellow]"
-        )
-        print(
-            "[yellow]Determine your blob type with https://verify.shsh.host or https://tsssaver.1conan.com/check or img4tool.[/yellow]"
+            """[yellow][bold]Note:[/bold] Your device is probably an A12+ device.
+If you updated to your current version using the Settings app over-the-air, you [bold]cannot[/bold] use this blob, even with a jailbreak.
+Refer to https://ios.cfw.guide/saving-blobs/#ota-onboard-blobs for more information.
+Determine your blob type with https://verify.shsh.host or https://tsssaver.1conan.com/check or img4tool.[/yellow]"""
         )
     return 0
 
