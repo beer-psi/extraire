@@ -4,12 +4,19 @@ import pyasn1.type.univ
 from typing import Union, Optional
 
 
-__all__ = ["get_im4m_from_img4", "get_im4r_from_img4", "get_bncn_from_im4r", "get_value_from_im4m", "endian_converter", "convert_img4_to_shsh"]
+__all__ = [
+    "get_im4m_from_img4",
+    "get_im4r_from_img4",
+    "get_bncn_from_im4r",
+    "get_value_from_im4m",
+    "endian_converter",
+    "convert_img4_to_shsh",
+]
 
 
 def __remove_prefix(text: str, prefix: str) -> str:
     if text.startswith(prefix):
-        return text[len(prefix):]
+        return text[len(prefix) :]
     return text
 
 
@@ -76,8 +83,8 @@ def endian_converter(val: Union[bytes, str, pyasn1.type.univ.OctetString]) -> st
     else:
         ba = bytearray(val)
     ba.reverse()
-    s = ''.join(format(x, '02x') for x in ba)
-    return f'0x{s}'
+    s = "".join(format(x, "02x") for x in ba)
+    return f"0x{s}"
 
 
 def convert_img4_to_shsh(img4: pyasn1.type.univ.Sequence) -> dict:
