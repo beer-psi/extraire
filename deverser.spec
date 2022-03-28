@@ -176,7 +176,10 @@ a = Analysis(
         "email.iterators",
         "email.policy",
         "importlib.metadata",
-    ] + (["pdb", "code"] if not debug else []),
+    ]
+    + (["pdb", "code"] if not debug else [])
+    + (["encodings.cp1252"] if os.name != "nt" else [])
+    + (["encodings.latin1"] if os.name != "posix" else []),
     win_no_prefer_redirects=False,
     win_private_assemblies=False,
     cipher=block_cipher,
