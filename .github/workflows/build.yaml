@@ -154,7 +154,7 @@ jobs:
             if [ "$artifact_label" = "deverser-windows" ]; then
               artifact_label=${artifact_label}_v${version}.exe
             else
-              artifact_label=${artifact_label}_${version}
+              artifact_label=${artifact_label}_v${version}
             fi
             mv $asset $artifact_label
             assets+=("$artifact_label")
