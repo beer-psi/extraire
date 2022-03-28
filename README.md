@@ -12,7 +12,7 @@
 Simple program to dump onboard SHSH blobs with a valid generator for iOS devices. Supports Windows, macOS and Linux.
 
 ## What's this?
-This program dumps iBoot from /dev/disk1 on the device, copies it to your computer and converts it to a valid SHSH blob, no external dependencies required.
+This program dumps the IMG4 ApTicket from /dev/disk1 on the device, copies it to your computer and converts it to a valid SHSH blob, no external dependencies required.
 
 Even though the dumped SHSH blob is valid, you will still be limited by a few factors:
 - SEP/Baseband/Rose firmware compatibility with the currently signed iOS version
