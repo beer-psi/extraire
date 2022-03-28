@@ -1,26 +1,23 @@
 import pyimg4
 import plistlib
-import paramiko.ssh_exception
-import pyasn1.codec.der.decoder
 import socket
 import tempfile
-import os.path
+import os
+import paramiko.ssh_exception
+import pyasn1.codec.der.decoder
+import pyasn1.type.univ
 from rich import print
 from rich.prompt import Prompt
 from sys import exit
 from fabric import Connection
-from typing import Tuple
+from typing import Tuple, Union
 
 
 def interactive_input() -> Tuple[str, str, int]:
-    print(
-        """Welcome to Deverser
-
-This script will dump blobs from your [bold]jailbroken[/bold] iOS device and copy it to your computer.
-Depending on the blob, you might [bold]not[/bold] be able to use it without a bootROM exploit (e.g. checkm8).
-Refer to https://ios.cfw.guide/saving-blobs/#saving-onboard-blobs for more information.""",
-        end="\n\n",
-    )
+    print("Welcome to Deverser")
+    print("This program will dump blobs from your [bold]jailbroken[/bold] iOS device and copy it to your computer.")
+    print("Depending on the blob, you might [bold]not[/bold] be able to use it without a bootROM exploit (e.g. checkm8).")
+    print("Refer to https://ios.cfw.guide/saving-blobs/#saving-onboard-blobs for more information.", end="\n\n")
     print(
         "Options given out in [bold blue](blue parentheses)[/bold blue] are default values and will be used if you haven't specified an option.",
         end="\n\n",
@@ -45,54 +42,64 @@ Refer to https://ios.cfw.guide/saving-blobs/#saving-onboard-blobs for more infor
     return (device_addr, password, sshport)
 
 
-def main():
-    device_addr, password, sshport = interactive_input()
-
+def dump_raw_apticket(address: str, password: str, port: int) -> Union[pyasn1.type.univ.Sequence, bool]:
     with tempfile.TemporaryDirectory() as tmpdir:
+        rawdump = os.path.join(tmpdir, "dump.raw")
         try:
             with Connection(
-                device_addr,
+                address,
                 user="root",
-                port=sshport,
+                port=port,
                 connect_kwargs={
                     "password": password,
-                    "timeout": 10.0,
                 },
+                connect_timeout=10.0,
             ) as c:
                 c.run("dd if=/dev/disk1 of=dump.raw bs=256 count=$((0x4000))")
-                c.get("dump.raw", os.path.join(tmpdir, "dump.raw"))
+                c.get("dump.raw", rawdump)
         except paramiko.ssh_exception.NoValidConnectionsError:
             print("[red]Could not connect to device.[/red]")
-            return 1
+            return False
         except paramiko.ssh_exception.AuthenticationException:
             print("[red]Could not authenticate with your device.[/red]")
             print("[red]Please check if:[/red]")
             print("[red] - You entered the correct password[/red]")
             print("[red] - You have not disabled root login[/red]")
-            return 1
+            return False
         except paramiko.ssh_exception.SSHException:
             print("[red]An SSH2 error occured.[/red]")
-            return 1
+            return False
         except socket.timeout:
             print("[red]Timed out trying to connect.[/red]")
-            return 1
+            return False
+        except OSError as oserr:
+            print(f"[red]OSError {oserr.errno} occured: {os.strerror(oserr.errno)}")
+            return False
+        except ValueError:
+            print(f"[red]Please specify the port separately. {address} is not a valid input.[/red]")
+            return False
 
-        with open(os.path.join(tmpdir, "dump.raw"), "rb") as f:
+        with open(rawdump, "rb") as f:
             img4, _ = pyasn1.codec.der.decoder.decode(f.read())
+    return img4
 
+
+def main():
+    device_addr, password, sshport = interactive_input()
+    img4 = dump_raw_apticket(device_addr, password, sshport)
+    if not img4:
+        return 1
     im4m = pyimg4.get_im4m_from_img4(img4)
-    ecid = pyimg4.get_value_from_im4m(im4m, "ECID")
-    with open(f"{str(ecid)}.blob.shsh2", "wb") as f:
+    ecid = str(pyimg4.get_value_from_im4m(im4m, "ECID"))
+    with open(f"{ecid}.blob.shsh2", "wb") as f:
         plistlib.dump(pyimg4.convert_img4_to_shsh(img4), f)
 
-    print(f"[green]Done! Your blob has been saved to {str(ecid)}.blob.shsh2[/green]")
+    print(f"[green]Done! Your blob has been saved to {ecid}.blob.shsh2[/green]")
     if 0x8020 <= int(pyimg4.get_value_from_im4m(im4m, "CHIP")) < 0x8900:
-        print(
-            """[yellow][bold]Note:[/bold] Your device is probably an A12+ device.
-If you updated to your current version using the Settings app over-the-air, you [bold]cannot[/bold] use this blob, even with a jailbreak.
-Refer to https://ios.cfw.guide/saving-blobs/#ota-onboard-blobs for more information.
-Determine your blob type with https://verify.shsh.host or https://tsssaver.1conan.com/check or img4tool.[/yellow]"""
-        )
+        print("[yellow][bold]Note:[/bold] Your device is probably an A12+ device.[/yellow]")
+        print("[yellow]If you updated to your current version using the Settings app over-the-air, you [bold]cannot[/bold] use this blob, even with a jailbreak.[/yellow]")
+        print("[yellow]Refer to https://ios.cfw.guide/saving-blobs/#ota-onboard-blobs for more information.[/yellow]")
+        print("[yellow]Determine your blob type with https://verify.shsh.host or https://tsssaver.1conan.com/check or img4tool.[/yellow]")
     return 0
 
 
