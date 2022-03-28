@@ -70,7 +70,6 @@ a = Analysis(
         "encodings.cp1140",
         "encodings.cp1250",
         "encodings.cp1251",
-        "encodings.cp1252",
         "encodings.cp1253",
         "encodings.cp1254",
         "encodings.cp1255",
