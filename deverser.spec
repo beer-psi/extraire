@@ -1,12 +1,14 @@
 # -*- mode: python ; coding: utf-8 -*-
+# type: ignore
 
 import python_minifier
 import os
 
-with open("deverser.py", "r") as f, open("deverser.min.py", "w") as f2:
-    f2.write(python_minifier.minify(f.read(), remove_literal_statements=True))
-with open("pyimg4.py", "r") as f, open("pyimg4.min.py", "w") as f2:
-    f2.write(python_minifier.minify(f.read(), remove_literal_statements=True))
+for files in ["deverser", "pyimg4"]:
+    with open(f"{files}.py", "r") as f, open(f"{files}.min.py", "w") as f2:
+        lines = [x for x in f.readlines() if 'from typing import' not in x]
+        f2.write(python_minifier.minify('\n'.join(lines), remove_literal_statements=True))
+
 
 block_cipher = None
 
@@ -40,8 +42,16 @@ a = Analysis(
         "_codecs_kr",
         "_codecs_tw",
         "_codecs_hk",
+        "_codecs_iso2022",
         "_datetime",
         "_decimal",
+        "_statistics",
+        "_uuid",
+        "_multibytecodec",
+        "_lzma",
+        "_bz2",
+        "_heapq",
+        "_multiprocessing",
     ],
     win_no_prefer_redirects=False,
     win_private_assemblies=False,
@@ -64,6 +74,7 @@ excluded_files = [
     "cryptography-36.0.2.dist-info/METADATA",
     "cryptography-36.0.2.dist-info/LICENSE.BSD",
     "nacl/py.typed",
+    "libintl.8.dylib",
 ]
 
 a.binaries = TOC([x for x in a.binaries if x[0] not in excluded_files])
