@@ -168,7 +168,8 @@ a = Analysis(
         "pyflakes",
         "pycodestyle",
         "mccabe",
-        "flake8"
+        "flake8",
+        "twine"       
     ]
     + (["pdb", "code"] if not debug else [])
     + (["encodings.cp1252"] if os.name != "nt" else [])
