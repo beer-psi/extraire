@@ -106,23 +106,33 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("host_port", metavar="HOST[:PORT]", nargs="?", help="The device's IP address")
     parser.add_argument("-p", "--password", help="The device's root user password", required=False)
+    parser.add_argument("-o", "--output", help="Where to save the dumped blob", required=False)
+    parser.add_argument("--non-interactive", action="store_true", help="Don't interactively ask for missing value (assume default if missing)", required=False)
     args = parser.parse_args()
 
-    if ':' in args.host_port:
-        [address, port] = args.host_port.split(":", 2) if args.host_port is not None else [None, None]
-    else:
-        address = args.host_port
-        port = None
+    if args.non_interactive:
+        if args.host_port is None:
+            print("[red]Device IP address not specified, and user asked for non-interactive mode. Exiting.[/red]")
+            return 1
+        args.password = "alpine" if args.password is None else args.password
+    if args.host_port is not None:
+        if ':' in args.host_port:
+            [address, port] = args.host_port.split(":", 2)
+        else:
+            address = args.host_port
+            port = 22 if args.non_interactive else None
     address, password, port = interactive_input(address, args.password, port)
 
     img4 = dump_raw_apticket(address, password, port)
     if not img4:
         return 1
+
     ecid = str(img4.im4m["ECID"])
-    with open(f"{ecid}.blob.shsh2", "wb") as f:
+    args.output = f"{ecid}.blob.shsh2" if args.output is None else args.output
+    with open(args.output, "wb") as f:
         plistlib.dump(img4.to_shsh(), f)
 
-    print(f"[green]Done! Your blob has been saved to {ecid}.blob.shsh2[/green]")
+    print(f"[green]Done! Your blob has been saved to {args.output}[/green]")
     if 0x8020 <= int(img4.im4m["CHIP"]) < 0x8900:
         print(
             "[yellow][bold]Note:[/bold] Your device is probably an A12+ device.[/yellow]"

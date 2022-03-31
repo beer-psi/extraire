@@ -20,7 +20,7 @@ Even though the dumped SHSH blob is valid, you will still be limited by a few fa
 OpenSSH Server installed on your jailbroken device. That's it!
 
 ## Usage
-- Download the latest stable release for your platform [here.](https://github.com/beerpiss/extraire/releases/tag/v0.2.0)
+- Download the latest stable release for your platform [here.](https://github.com/beerpiss/extraire/releases/tag/v0.1.3)
 - **(macOS/Linux only)** In a terminal window, type `chmod +x ` (with a trailing space) and drag and drop the downloaded file into the terminal, then hit Enter/Return to run.
 - Drag and drop the file into the terminal (again), then hit Enter/Return to run the program.
 - You will now be guided by the program.
