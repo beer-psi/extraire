@@ -116,11 +116,7 @@ def main():
             return 1
         args.password = "alpine" if args.password is None else args.password
     if args.host_port is not None:
-        if ':' in args.host_port:
-            [address, port] = args.host_port.split(":", 2)
-        else:
-            address = args.host_port
-            port = 22 if args.non_interactive else None
+        [address, port] = args.host_port.split(":", 2) if ':' in args.host_port else [args.host_port, 22 if args.non_interactive else None]
     address, password, port = interactive_input(address, args.password, port)
 
     img4 = dump_raw_apticket(address, password, port)
