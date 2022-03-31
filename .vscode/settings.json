@@ -1,0 +1,8 @@
+{
+    "yaml.schemas": {
+        "https://json.schemastore.org/github-workflow.json": "file:///Users/beerpsi/git_stuff/deverser.py/.github/workflows/build.yaml"
+    },
+    "python.linting.flake8Enabled": true,
+    "python.linting.enabled": true,
+    "python.linting.flake8Args": ["--ignore=E501"]
+}

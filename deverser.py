@@ -1,15 +1,15 @@
-from pyimg4 import *
-import plistlib
-import socket
-import tempfile
 import os
+import plistlib
 import paramiko.ssh_exception
 import pyasn1.codec.der.decoder
 import pyasn1.type.univ
+import socket
+import tempfile
+from fabric import Connection
+from pyimg4 import IMG4
 from rich import print
 from rich.prompt import Prompt
 from sys import exit
-from fabric import Connection
 from typing import Tuple, Union
 
 

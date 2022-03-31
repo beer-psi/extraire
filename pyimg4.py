@@ -1,7 +1,7 @@
 import pyasn1.codec.der.decoder
 import pyasn1.codec.der.encoder
 import pyasn1.type.univ
-from typing import Union, Optional, Any
+from typing import Union, Any
 
 
 __all__ = [
@@ -13,7 +13,7 @@ __all__ = [
 
 def __remove_prefix(text: str, prefix: str) -> str:
     if text.startswith(prefix):
-        return text[len(prefix) :]
+        return text[len(prefix):]
     return text
 
 
@@ -40,7 +40,7 @@ class IM4R:
         im4r: pyasn1.type.univ.Sequence
     ):
         self.im4r = im4r
-    
+
     @property
     def bncn(self) -> pyasn1.type.univ.Sequence:
         bncn = self.im4r[-1][-1]
@@ -55,7 +55,7 @@ class IM4M:
         im4m: pyasn1.type.univ.Sequence
     ):
         self.im4m = im4m
-    
+
     def __getitem__(self, key: str) -> Any:
         assert str(self.im4m[0]) == "IM4M"
         assert isinstance(self.im4m, pyasn1.type.univ.Sequence)
@@ -90,22 +90,22 @@ class IMG4:
         assert str(im4m[0]) == "IM4M"
         assert isinstance(im4m, pyasn1.type.univ.Sequence)
         return IM4M(im4m)
-    
+
     @property
     def im4r(self) -> pyasn1.type.univ.Sequence:
         im4r = self.img4[3]
         assert str(im4r[0]) == "IM4R"
         assert isinstance(im4r, pyasn1.type.univ.Sequence)
         return IM4R(im4r)
-    
+
     def to_shsh(self) -> dict:
         generator = endian_converter(self.im4r.bncn[-1])
 
         _im4m = self.im4m.im4m
-        _im4m.tagSet._TagSet__superTags = (_im4m.tagSet._TagSet__superTags[0],)   
+        _im4m.tagSet._TagSet__superTags = (_im4m.tagSet._TagSet__superTags[0],)
 
         _shsh = {}
         _shsh["ApImg4Ticket"] = pyasn1.codec.der.encoder.encode(_im4m)
-        _shsh["generator"] = generator 
+        _shsh["generator"] = generator
 
         return _shsh
