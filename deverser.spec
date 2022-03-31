@@ -1,22 +1,11 @@
 # -*- mode: python ; coding: utf-8 -*-
 # type: ignore
 
-import python_minifier
-import os
-
-for files in ["deverser", "pyimg4"]:
-    with open(f"{files}.py", "r") as f, open(f"{files}.min.py", "w") as f2:
-        lines = [x for x in f.readlines() if "from typing import" not in x]
-        f2.write(
-            python_minifier.minify("\n".join(lines), remove_literal_statements=True)
-        )
-
-
 block_cipher = None
 debug = False
 
 a = Analysis(
-    ["deverser.min.py", "pyimg4.min.py"],
+    ["deverser/__main__.py"],
     pathex=[],
     binaries=[],
     datas=[],

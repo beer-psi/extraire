@@ -5,11 +5,10 @@ import pyasn1.codec.der.decoder
 import pyasn1.type.univ
 import socket
 import tempfile
+from .pyimg4 import IMG4
 from fabric import Connection
-from pyimg4 import IMG4
 from rich import print
 from rich.prompt import Prompt
-from sys import exit
 from typing import Tuple, Union
 
 
@@ -119,11 +118,3 @@ def main():
             "[yellow]Determine your blob type with https://verify.shsh.host or https://tsssaver.1conan.com/check or img4tool.[/yellow]"
         )
     return 0
-
-
-if __name__ == "__main__":
-    try:
-        exit(main())
-    except KeyboardInterrupt:
-        print("\n[red]Aborted by user.[/red]")
-        exit(1)
