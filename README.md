@@ -9,7 +9,7 @@
 
 (I need a better name, this is stolen)
 
-Simple program to dump onboard SHSH blobs with a valid generator for iOS devices. Supports Windows, macOS and Linux.
+Simple program to dump onboard SHSH blobs with a valid generator for **jailbroken** iOS devices. Supports Windows, macOS and Linux.
 
 ## What's this?
 This program dumps the IMG4 ApTicket from /dev/disk1 on the device, copies it to your computer and converts it to a valid SHSH blob, no external dependencies required.
