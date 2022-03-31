@@ -6,6 +6,7 @@ on:
     - '.github/workflows/*'
     - '*.toml'
     - '*.lock'
+    - '*.spec'
   workflow_dispatch:
   release:
     types:
