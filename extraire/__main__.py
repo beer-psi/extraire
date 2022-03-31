@@ -1,6 +1,6 @@
 from sys import exit
 from rich import print
-from deverser.deverser import main
+from extraire.extraire import main
 
 
 if __name__ == "__main__":

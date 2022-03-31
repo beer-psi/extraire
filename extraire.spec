@@ -5,7 +5,7 @@ block_cipher = None
 debug = False
 
 a = Analysis(
-    ["deverser/__main__.py"],
+    ["extraire/__main__.py"],
     pathex=[],
     binaries=[],
     datas=[],
@@ -209,7 +209,7 @@ exe = EXE(
     a.zipfiles,
     a.datas,
     [],
-    name="deverser",
+    name="extraire",
     debug=debug,
     bootloader_ignore_signals=False,
     strip=False if os.name == "nt" else True,

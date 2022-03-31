@@ -1,4 +1,4 @@
-name: build deverser.py
+name: build extraire
 on:
   push:
     paths:
@@ -111,13 +111,13 @@ jobs:
           $PYINSTALLER_ARGS.Add("--strip")
         }
         $PYINSTALLER_ARGS.Add("-F")
-        Write-Output "poetry run pyinstaller $PYINSTALLER_ARGS deverser.py pyimg4.py"
-        poetry run pyinstaller $PYINSTALLER_ARGS deverser.spec
+        Write-Output "poetry run pyinstaller $PYINSTALLER_ARGS extraire.spec"
+        poetry run pyinstaller $PYINSTALLER_ARGS extraire.spec
     - 
       name: Upload artifacts
       uses: actions/upload-artifact@v3
       with:
-        name: deverser-${{ matrix.os.prettyname }}
+        name: extraire-${{ matrix.os.prettyname }}
         path: ./dist/*
   upload-prerelease:
     needs: build
@@ -152,7 +152,7 @@ jobs:
             if [ -d "$asset" ]; then continue; fi
             chmod +x $asset
             artifact_label=$(python -c "import os; print(os.path.basename(os.path.abspath(os.path.join('$asset', '..'))))")
-            if [ "$artifact_label" = "deverser-windows" ]; then
+            if [ "$artifact_label" = "extraire-windows" ]; then
               artifact_label=${artifact_label}_v${version}.exe
             else
               artifact_label=${artifact_label}_v${version}

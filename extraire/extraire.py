@@ -16,7 +16,7 @@ from typing import Optional, Tuple, Union
 def interactive_input(
     address: Optional[str] = None, password: Optional[str] = None, port: Optional[int] = None
 ) -> Tuple[str, str, int]:
-    print("Welcome to Deverser")
+    print("Welcome to Extraire")
     print(
         "This program will dump blobs from your [bold]jailbroken[/bold] iOS device and copy it to your computer."
     )

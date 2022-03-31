@@ -1,13 +1,11 @@
-<h1 align="center">Deverser</h2>
+<h1 align="center">Extraire</h2>
 
 <p align="center">
-<a href="https://github.com/beerpiss/deverser.py/actions"><img alt="Actions Status" src="https://github.com/beerpiss/deverser.py/actions/workflows/build.yaml/badge.svg"></a>
+<a href="https://github.com/beerpiss/extraire/actions"><img alt="Actions Status" src="https://github.com/beerpiss/extraire/actions/workflows/build.yaml/badge.svg"></a>
 <a href="https://github.com/psf/black"><img alt="Code style: black" src="https://img.shields.io/badge/code%20style-black-000000.svg"></a>
-<a href="https://github.com/beerpiss/deverser.py/blob/trunk/LICENSE"><img alt="License: 0BSD" src="https://img.shields.io/static/v1?label=License&message=0BSD&color=brightgreen"></a>
+<a href="https://github.com/beerpiss/extraire/blob/trunk/LICENSE"><img alt="License: 0BSD" src="https://img.shields.io/static/v1?label=License&message=0BSD&color=brightgreen"></a>
 <img alt="Supported Python versions: 3.6.2, 3.7, 3.8, 3.9, 3.10" src="https://img.shields.io/badge/python-3.6.2%20%7C%203.7%20%7C%203.8%20%7C%203.9%20%7C%203.10-blue">
 </p>
-
-(I need a better name, this is stolen)
 
 Simple program to dump onboard SHSH blobs with a valid generator for **jailbroken** iOS devices. Supports Windows, macOS and Linux.
 
@@ -22,13 +20,13 @@ Even though the dumped SHSH blob is valid, you will still be limited by a few fa
 OpenSSH Server installed on your jailbroken device. That's it!
 
 ## Usage
-- Download the latest stable release for your platform [here.](https://github.com/beerpiss/deverser.py/releases/tag/v0.1.3)
+- Download the latest stable release for your platform [here.](https://github.com/beerpiss/extraire/releases/tag/v0.1.3)
 - **(macOS/Linux only)** In a terminal window, type `chmod +x ` (with a trailing space) and drag and drop the downloaded file into the terminal, then hit Enter/Return to run.
 - Drag and drop the file into the terminal (again), then hit Enter/Return to run the program.
 - You will now be guided by the program.
 
 ## Ugh, I don't like standalone binaries?
-Fine. Clone this repo, install the dependencies with `poetry install` or `pip install .`, and run `python3 deverser.py`
+Fine. Clone this repo, install the dependencies with `poetry install` or `pip install .`, and run `python3 -m extraire`
 
 ## Credits
 [tihmstar](https://github.com/tihmstar): without his [img4tool](https://github.com/tihmstar/img4tool) code I wouldn't be able to write code for dealing with IMG4s in Python.
