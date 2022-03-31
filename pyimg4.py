@@ -1,16 +1,13 @@
 import pyasn1.codec.der.decoder
 import pyasn1.codec.der.encoder
 import pyasn1.type.univ
-from typing import Union, Optional
+from typing import Union, Optional, Any
 
 
 __all__ = [
-    "get_im4m_from_img4",
-    "get_im4r_from_img4",
-    "get_bncn_from_im4r",
-    "get_value_from_im4m",
-    "endian_converter",
-    "convert_img4_to_shsh",
+    "IMG4",
+    "IM4R",
+    "IM4M"
 ]
 
 
@@ -18,56 +15,6 @@ def __remove_prefix(text: str, prefix: str) -> str:
     if text.startswith(prefix):
         return text[len(prefix) :]
     return text
-
-
-def get_im4m_from_img4(img4: pyasn1.type.univ.Sequence) -> pyasn1.type.univ.Sequence:
-    im4m = img4[2]
-    assert str(im4m[0]) == "IM4M"
-    assert isinstance(im4m, pyasn1.type.univ.Sequence)
-    return im4m
-
-
-def get_im4r_from_img4(img4: pyasn1.type.univ.Sequence) -> pyasn1.type.univ.Sequence:
-    im4r = img4[3]
-    assert str(im4r[0]) == "IM4R"
-    assert isinstance(im4r, pyasn1.type.univ.Sequence)
-    return im4r
-
-
-def get_bncn_from_im4r(im4r: pyasn1.type.univ.Sequence) -> pyasn1.type.univ.Sequence:
-    bncn = im4r[-1][-1]
-    assert str(bncn[0]) == "BNCN"
-    assert isinstance(bncn, pyasn1.type.univ.Sequence)
-    return bncn
-
-
-def get_value_from_im4m(im4m: pyasn1.type.univ.Sequence, key: str) -> Optional[bytes]:
-    """Gets the value of a key from an im4m
-
-    Args:
-        im4m (pyasn1.type.univ.Sequence): A decoded im4m.
-        key (str): The key to get the value for.
-    Returns:
-        Union[bytes, NoneType]: The value of the key, or None if the key is not found.
-    """
-    assert str(im4m[0]) == "IM4M"
-    assert isinstance(im4m, pyasn1.type.univ.Sequence)
-
-    set = im4m[2]
-    manbpriv = set[0]
-    assert str(manbpriv[0]) == "MANB"
-
-    manbset = manbpriv[1]
-    manppriv = manbset[0]
-    assert str(manppriv[0]) == "MANP"
-
-    manp = manppriv[1]
-
-    for i in range(len(manp)):
-        if str(manp[i][0]) == key:
-            return manp[i][1]
-
-    return None
 
 
 def endian_converter(val: Union[bytes, str, pyasn1.type.univ.OctetString]) -> str:
@@ -87,23 +34,78 @@ def endian_converter(val: Union[bytes, str, pyasn1.type.univ.OctetString]) -> st
     return f"0x{s}"
 
 
-def convert_img4_to_shsh(img4: pyasn1.type.univ.Sequence) -> dict:
-    """Converts an img4 to an SHSH blob
+class IM4R:
+    def __init__(
+        self,
+        im4r: pyasn1.type.univ.Sequence
+    ):
+        self.im4r = im4r
+    
+    @property
+    def bncn(self) -> pyasn1.type.univ.Sequence:
+        bncn = self.im4r[-1][-1]
+        assert str(bncn[0]) == "BNCN"
+        assert isinstance(bncn, pyasn1.type.univ.Sequence)
+        return bncn
 
-    Args:
-        img4 (pyasn1.type.univ.Sequence): A decoded img4.
-    Returns:
-        dict: A dictionary containing the SHSH blob, which can be saved to a file with plistlib.
-    """
-    im4r = get_im4r_from_img4(img4)
-    bncn = get_bncn_from_im4r(im4r)
-    generator = endian_converter(bncn[-1])
 
-    im4m = get_im4m_from_img4(img4)
-    im4m.tagSet._TagSet__superTags = (im4m.tagSet._TagSet__superTags[0],)
+class IM4M:
+    def __init__(
+        self,
+        im4m: pyasn1.type.univ.Sequence
+    ):
+        self.im4m = im4m
+    
+    def __getitem__(self, key: str) -> Any:
+        assert str(self.im4m[0]) == "IM4M"
+        assert isinstance(self.im4m, pyasn1.type.univ.Sequence)
 
-    shsh = {}
-    shsh["ApImg4Ticket"] = pyasn1.codec.der.encoder.encode(im4m)
-    shsh["generator"] = generator
+        set = self.im4m[2]
+        manbpriv = set[0]
+        assert str(manbpriv[0]) == "MANB"
 
-    return shsh
+        manbset = manbpriv[1]
+        manppriv = manbset[0]
+        assert str(manppriv[0]) == "MANP"
+
+        manp = manppriv[1]
+
+        for i in range(len(manp)):
+            if str(manp[i][0]) == key:
+                return manp[i][1]
+
+        raise KeyError
+
+
+class IMG4:
+    def __init__(
+        self,
+        img4: pyasn1.type.univ.Sequence
+    ):
+        self.img4 = img4
+
+    @property
+    def im4m(self) -> pyasn1.type.univ.Sequence:
+        im4m = self.img4[2]
+        assert str(im4m[0]) == "IM4M"
+        assert isinstance(im4m, pyasn1.type.univ.Sequence)
+        return IM4M(im4m)
+    
+    @property
+    def im4r(self) -> pyasn1.type.univ.Sequence:
+        im4r = self.img4[3]
+        assert str(im4r[0]) == "IM4R"
+        assert isinstance(im4r, pyasn1.type.univ.Sequence)
+        return IM4R(im4r)
+    
+    def to_shsh(self) -> dict:
+        generator = endian_converter(self.im4r.bncn[-1])
+
+        _im4m = self.im4m.im4m
+        _im4m.tagSet._TagSet__superTags = (_im4m.tagSet._TagSet__superTags[0],)   
+
+        _shsh = {}
+        _shsh["ApImg4Ticket"] = pyasn1.codec.der.encoder.encode(_im4m)
+        _shsh["generator"] = generator 
+
+        return _shsh

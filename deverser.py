@@ -1,4 +1,4 @@
-import pyimg4
+from pyimg4 import *
 import plistlib
 import socket
 import tempfile
@@ -51,7 +51,7 @@ def interactive_input() -> Tuple[str, str, int]:
 
 def dump_raw_apticket(
     address: str, password: str, port: int
-) -> Union[pyasn1.type.univ.Sequence, bool]:
+) -> Union[IMG4, bool]:
     with tempfile.TemporaryDirectory() as tmpdir:
         rawdump = os.path.join(tmpdir, "dump.raw")
         try:
@@ -92,7 +92,7 @@ def dump_raw_apticket(
 
         with open(rawdump, "rb") as f:
             img4, _ = pyasn1.codec.der.decoder.decode(f.read())
-    return img4
+    return IMG4(img4)
 
 
 def main():
@@ -100,13 +100,12 @@ def main():
     img4 = dump_raw_apticket(device_addr, password, sshport)
     if not img4:
         return 1
-    im4m = pyimg4.get_im4m_from_img4(img4)
-    ecid = str(pyimg4.get_value_from_im4m(im4m, "ECID"))
+    ecid = str(img4.im4m["ECID"])
     with open(f"{ecid}.blob.shsh2", "wb") as f:
-        plistlib.dump(pyimg4.convert_img4_to_shsh(img4), f)
+        plistlib.dump(img4.to_shsh(), f)
 
     print(f"[green]Done! Your blob has been saved to {ecid}.blob.shsh2[/green]")
-    if 0x8020 <= int(pyimg4.get_value_from_im4m(im4m, "CHIP")) < 0x8900:
+    if 0x8020 <= int(img4.im4m["CHIP"]) < 0x8900:
         print(
             "[yellow][bold]Note:[/bold] Your device is probably an A12+ device.[/yellow]"
         )
