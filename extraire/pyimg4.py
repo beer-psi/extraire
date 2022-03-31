@@ -4,16 +4,12 @@ import pyasn1.type.univ
 from typing import Union, Any
 
 
-__all__ = [
-    "IMG4",
-    "IM4R",
-    "IM4M"
-]
+__all__ = ["IMG4", "IM4R", "IM4M"]
 
 
 def __remove_prefix(text: str, prefix: str) -> str:
     if text.startswith(prefix):
-        return text[len(prefix):]
+        return text[len(prefix) :]
     return text
 
 
@@ -35,10 +31,7 @@ def endian_converter(val: Union[bytes, str, pyasn1.type.univ.OctetString]) -> st
 
 
 class IM4R:
-    def __init__(
-        self,
-        im4r: pyasn1.type.univ.Sequence
-    ):
+    def __init__(self, im4r: pyasn1.type.univ.Sequence):
         self.im4r = im4r
 
     @property
@@ -50,10 +43,7 @@ class IM4R:
 
 
 class IM4M:
-    def __init__(
-        self,
-        im4m: pyasn1.type.univ.Sequence
-    ):
+    def __init__(self, im4m: pyasn1.type.univ.Sequence):
         self.im4m = im4m
 
     def __getitem__(self, key: str) -> Any:
@@ -78,10 +68,7 @@ class IM4M:
 
 
 class IMG4:
-    def __init__(
-        self,
-        img4: pyasn1.type.univ.Sequence
-    ):
+    def __init__(self, img4: pyasn1.type.univ.Sequence):
         self.img4 = img4
 
     @property

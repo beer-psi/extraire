@@ -14,7 +14,9 @@ from typing import Optional, Tuple, Union
 
 
 def interactive_input(
-    address: Optional[str] = None, password: Optional[str] = None, port: Optional[int] = None
+    address: Optional[str] = None,
+    password: Optional[str] = None,
+    port: Optional[int] = None,
 ) -> Tuple[str, str, int]:
     print("Welcome to Extraire")
     print(
@@ -44,21 +46,21 @@ def interactive_input(
         print("")
 
     if password is None:
-        print("Please note that it is normal for the password to [bold]not[/bold] appear.")
+        print(
+            "Please note that it is normal for the password to [bold]not[/bold] appear."
+        )
         _password = Prompt.ask(
             "[bold]Enter the root user password[/bold]", password=True, default="alpine"
         )
         print("")
-    
+
     if port is None:
         _port = int(Prompt.ask("[bold]Enter the SSH port[/bold]", default="22"))
 
     return (address or _address, password or _password, port or _port)
 
 
-def dump_raw_apticket(
-    address: str, password: str, port: int
-) -> Union[IMG4, bool]:
+def dump_raw_apticket(address: str, password: str, port: int) -> Union[IMG4, bool]:
     with tempfile.TemporaryDirectory() as tmpdir:
         rawdump = os.path.join(tmpdir, "dump.raw")
         try:
@@ -104,19 +106,36 @@ def dump_raw_apticket(
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument("host_port", metavar="HOST[:PORT]", nargs="?", help="The device's IP address")
-    parser.add_argument("-p", "--password", help="The device's root user password", required=False)
-    parser.add_argument("-o", "--output", help="Where to save the dumped blob", required=False)
-    parser.add_argument("--non-interactive", action="store_true", help="Don't interactively ask for missing value (assume default if missing)", required=False)
+    parser.add_argument(
+        "host_port", metavar="HOST[:PORT]", nargs="?", help="The device's IP address"
+    )
+    parser.add_argument(
+        "-p", "--password", help="The device's root user password", required=False
+    )
+    parser.add_argument(
+        "-o", "--output", help="Where to save the dumped blob", required=False
+    )
+    parser.add_argument(
+        "--non-interactive",
+        action="store_true",
+        help="Don't interactively ask for missing value (assume default if missing)",
+        required=False,
+    )
     args = parser.parse_args()
 
     if args.non_interactive:
         if args.host_port is None:
-            print("[red]Device IP address not specified, and user asked for non-interactive mode. Exiting.[/red]")
+            print(
+                "[red]Device IP address not specified, and user asked for non-interactive mode. Exiting.[/red]"
+            )
             return 1
         args.password = "alpine" if args.password is None else args.password
     if args.host_port is not None:
-        [address, port] = args.host_port.split(":", 2) if ':' in args.host_port else [args.host_port, 22 if args.non_interactive else None]
+        [address, port] = (
+            args.host_port.split(":", 2)
+            if ":" in args.host_port
+            else [args.host_port, 22 if args.non_interactive else None]
+        )
     address, password, port = interactive_input(address, args.password, port)
 
     img4 = dump_raw_apticket(address, password, port)
