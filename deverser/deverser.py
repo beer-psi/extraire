@@ -1,3 +1,4 @@
+import argparse
 import os
 import plistlib
 import paramiko.ssh_exception
@@ -9,10 +10,12 @@ from .pyimg4 import IMG4
 from fabric import Connection
 from rich import print
 from rich.prompt import Prompt
-from typing import Tuple, Union
+from typing import Optional, Tuple, Union
 
 
-def interactive_input() -> Tuple[str, str, int]:
+def interactive_input(
+    address: Optional[str] = None, password: Optional[str] = None, port: Optional[int] = None
+) -> Tuple[str, str, int]:
     print("Welcome to Deverser")
     print(
         "This program will dump blobs from your [bold]jailbroken[/bold] iOS device and copy it to your computer."
@@ -24,28 +27,33 @@ def interactive_input() -> Tuple[str, str, int]:
         "Refer to https://ios.cfw.guide/saving-blobs/#saving-onboard-blobs for more information.",
         end="\n\n",
     )
-    print(
-        "Options given out in [bold blue](blue parentheses)[/bold blue] are default values and will be used if you haven't specified an option.",
-        end="\n\n",
-    )
+    if None in (address, password, port):
+        print(
+            "Options given out in [bold blue](blue parentheses)[/bold blue] are default values and will be used if you haven't specified an option.",
+            end="\n\n",
+        )
 
-    while True:
-        device_addr = Prompt.ask("[bold]Enter the device's IP address[/bold]")
-        if device_addr == "":
-            print("Please enter an IP address.")
-            continue
-        else:
-            break
-    print("")
+    if address is None:
+        while True:
+            _address = Prompt.ask("[bold]Enter the device's IP address[/bold]")
+            if _address == "":
+                print("Please enter an IP address.")
+                continue
+            else:
+                break
+        print("")
 
-    print("Please note that it is normal for the password to [bold]not[/bold] appear.")
-    password = Prompt.ask(
-        "[bold]Enter the root user password[/bold]", password=True, default="alpine"
-    )
-    print("")
+    if password is None:
+        print("Please note that it is normal for the password to [bold]not[/bold] appear.")
+        _password = Prompt.ask(
+            "[bold]Enter the root user password[/bold]", password=True, default="alpine"
+        )
+        print("")
+    
+    if port is None:
+        _port = int(Prompt.ask("[bold]Enter the SSH port[/bold]", default="22"))
 
-    sshport = int(Prompt.ask("[bold]Enter the SSH port[/bold]", default="22"))
-    return (device_addr, password, sshport)
+    return (address or _address, password or _password, port or _port)
 
 
 def dump_raw_apticket(
@@ -95,8 +103,15 @@ def dump_raw_apticket(
 
 
 def main():
-    device_addr, password, sshport = interactive_input()
-    img4 = dump_raw_apticket(device_addr, password, sshport)
+    parser = argparse.ArgumentParser()
+    parser.add_argument("host_port", metavar="HOST[:PORT]", nargs="?", help="The device's IP address")
+    parser.add_argument("-p", "--password", help="The device's root user password", required=False)
+    args = parser.parse_args()
+
+    [address, port] = args.host_port.split(":", 2) if args.host_port is not None else [None, None]
+    address, password, port = interactive_input(address, args.password, port)
+
+    img4 = dump_raw_apticket(address, password, port)
     if not img4:
         return 1
     ecid = str(img4.im4m["ECID"])
