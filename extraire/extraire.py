@@ -104,6 +104,14 @@ def dump_raw_apticket(address: str, password: str, port: int) -> Union[IMG4, boo
     return IMG4(img4)
 
 
+def verify_shsh_blob(
+    blob: dict,
+    device: str,
+    buildid: str,
+) -> bool:
+    pass
+
+
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument(
@@ -114,6 +122,30 @@ def main():
     )
     parser.add_argument(
         "-o", "--output", help="Where to save the dumped blob", required=False
+    )
+    parser.add_argument(
+        "--verify",
+        action="store_true",
+        help="Verify if the dumped blob is valid",
+        required=False,
+    )
+    parser.add_argument(
+        "-d",
+        "--device",
+        help="iOS device identifier",
+        required=False,
+    )
+    parser.add_argument(
+        "-i",
+        "--ios-version",
+        help="iOS version",
+        required=False,
+    )
+    parser.add_argument(
+        "-b",
+        "--buildid",
+        help="iOS buildID",
+        required=False,
     )
     parser.add_argument(
         "--non-interactive",

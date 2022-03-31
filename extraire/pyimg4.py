@@ -1,7 +1,9 @@
+import binascii
 import pyasn1.codec.der.decoder
 import pyasn1.codec.der.encoder
 import pyasn1.type.univ
 from typing import Union, Any
+from rich import print
 
 
 __all__ = ["IMG4", "IM4R", "IM4M"]
@@ -42,29 +44,88 @@ class IM4R:
         return bncn
 
 
+class MANP:
+    def __init__(self, manp: pyasn1.type.univ.Sequence):
+        assert (manp[0]) == "MANP"
+        self._manp = manp
+
+    def __getitem__(self, key: str) -> Any:
+        for i in range(len(self._manp[1])):
+            if str(self._manp[1][i][0]) == key:
+                return self._manp[1][i][1]
+        raise KeyError
+
+
 class IM4M:
     def __init__(self, im4m: pyasn1.type.univ.Sequence):
         self.im4m = im4m
-
-    def __getitem__(self, key: str) -> Any:
         assert str(self.im4m[0]) == "IM4M"
         assert isinstance(self.im4m, pyasn1.type.univ.Sequence)
 
-        set = self.im4m[2]
-        manbpriv = set[0]
-        assert str(manbpriv[0]) == "MANB"
+        self.im4m_version = im4m[1]
+        self.set = im4m[2]
+        self.manbpriv = self.set[0]
+        assert str(self.manbpriv[0]) == "MANB"
 
-        manbset = manbpriv[1]
-        manppriv = manbset[0]
-        assert str(manppriv[0]) == "MANP"
+        self.manbset = self.manbpriv[1]
+        self.manp = MANP(self.manbset[0])
 
-        manp = manppriv[1]
+    def __board_matches_build_identity(self, build_identity: dict) -> bool:
+        __dict = {
+            "BORD": "ApBoardID",
+            "CHIP": "ApChipID",
+            "SDOM": "ApSecurityDomain",
+        }
+        for key, value in __dict.items():
+            if int(self.manp[key]) != int(build_identity[value], 16):
+                return False
+        return True
 
-        for i in range(len(manp)):
-            if str(manp[i][0]) == key:
-                return manp[i][1]
+    def matches_build_identity(self, build_identity: dict) -> bool:
+        print("Checking if board matches BuildIdentity... ", end="")
+        if not self.__board_matches_build_identity(build_identity):
+            print("[red]NO[/red]")
+            return False
+        print("[green]YES[/green]")
 
-        raise KeyError
+        hash_dict = {}
+        for item in self.manbset[1:]:
+            tagtype = item[0]
+            tagset = item[1]
+            for i in range(len(tagset)):
+                item2 = tagset[i]
+                dgst = binascii.hexlify(bytes(item2[1])).decode()
+                hash_dict[dgst] = str(tagtype)
+
+        for key, value in build_identity["Manifest"].items():
+            trusted = value.get("Trusted")
+            if trusted is not None and not trusted:
+                print(f"[green][bold]{key}[/bold]: OK (untrusted)[/green]")
+                continue  # OK (untrusted)
+
+            dgst = value.get("Digest")
+            if dgst is None:
+                print(f"[bold]{key}[/bold]: IGN (no digest in BuildManifest)")
+                continue  # IGN (no digest in BuildManifest)
+
+            dgst_str = binascii.hexlify(dgst).decode()
+            if hash_dict.get(dgst_str) is not None:
+                print(
+                    f"[green][bold]{key}[/bold]: OK (found {hash_dict.get(dgst_str)} with matching hash)[/green]"
+                )
+                continue  # OK (found something with matching hash)
+            else:
+                if not trusted:
+                    print(
+                        f"[bold]{key}[/bold]: IGN (hash not found in im4m, but ignoring since not explicitly enforced by the Trusted=YES flag)"
+                    )
+                    continue
+                else:
+                    print(
+                        f"[red][bold]{key}[/bold]: BAD! (hash not found in im4m)[/red]"
+                    )
+                    return False  # BAD (hash not found in im4m)
+        return True
 
 
 class IMG4:
