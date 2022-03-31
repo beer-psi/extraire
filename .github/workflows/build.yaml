@@ -14,7 +14,7 @@ on:
 
 jobs:
   check-minimum-python:
-    if: ${{ !startsWith(github.ref, 'refs/tags/') && (!contains(github.event.head_commit.message, 'skip-ci') || !contains(github.event.head_commit.message, 'style')) }}
+    if: ${{ (github.event_name == 'release' || !startsWith(github.ref, 'refs/tags/')) && !contains(github.event.head_commit.message, 'skip-ci') && !contains(github.event.head_commit.message, 'style') }}
     runs-on: ubuntu-latest
     steps:
     -
