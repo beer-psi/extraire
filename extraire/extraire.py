@@ -108,7 +108,11 @@ def main():
     parser.add_argument("-p", "--password", help="The device's root user password", required=False)
     args = parser.parse_args()
 
-    [address, port] = args.host_port.split(":", 2) if args.host_port is not None else [None, None]
+    if ':' in args.host_port:
+        [address, port] = args.host_port.split(":", 2) if args.host_port is not None else [None, None]
+    else:
+        address = args.host_port
+        port = None
     address, password, port = interactive_input(address, args.password, port)
 
     img4 = dump_raw_apticket(address, password, port)
