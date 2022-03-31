@@ -31,7 +31,7 @@ jobs:
       run: pip install -U vermin
     - 
       name: Check minimum version
-      run: vermin -t=3.6- --violations --backport typing --no-parse-comments *.py
+      run: vermin -t=3.6- --violations --backport typing --no-parse-comments extraire/*.py
   build:
     needs: check-minimum-python
     strategy:
