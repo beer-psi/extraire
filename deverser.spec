@@ -176,6 +176,10 @@ a = Analysis(
         "email.iterators",
         "email.policy",
         "importlib.metadata",
+        "pyflakes",
+        "pycodestyle",
+        "mccabe",
+        "flake8"
     ]
     + (["pdb", "code"] if not debug else [])
     + (["encodings.cp1252"] if os.name != "nt" else [])
