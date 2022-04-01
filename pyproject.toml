@@ -5,6 +5,17 @@ description = "Dumps onboard SHSH blobs with a valid generator for jailbroken iO
 authors = ["beerpiss <lacvtg.a1.2023@gmail.com>"]
 license = "0BSD"
 readme = "README.md"
+keywords = ["ios", "jailbreak", "iboot", "img4", "shsh", "blob"]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Environment :: Console",
+    "Programming Language :: Python :: 3.6.2",
+    "Programming Language :: Python :: 3.7",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Topic :: Utilities"
+]
 packages = [
     { include = "extraire" }
 ]
