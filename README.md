@@ -21,11 +21,34 @@ Even though the dumped SHSH blob is valid, you will still be limited by a few fa
 ## Requirements
 OpenSSH Server installed on your jailbroken device. That's it!
 
+## Installation
+### From PyPI
+```
+pip install -U extraire
+```
+### Standalone binaries
+Standalone binaries for Windows, macOS and Linux can be found [here.](https://github.com/beerpiss/extraire/releases/tag/v0.1.4)
+
+You will need to allow executable permission for macOS and Linux after downloading. Run `chmod +x /path/to/extraire` in a terminal (replace `/path/to/extraire` with the actual path).
+
 ## Usage
-- Download the latest stable release for your platform [here.](https://github.com/beerpiss/extraire/releases/tag/v0.1.4)
-- **(macOS/Linux only)** In a terminal window, type `chmod +x ` (with a trailing space) and drag and drop the downloaded file into the terminal, then hit Enter/Return to run.
-- Drag and drop the file into the terminal (again), then hit Enter/Return to run the program.
-- You will now be guided by the program.
+Run `extraire` only for an interactive guide.
+
+```
+❯ extraire --help
+usage: extraire [-h] [-p PASSWORD] [-o OUTPUT] [--non-interactive] [HOST[:PORT]]
+
+positional arguments:
+  HOST[:PORT]           The device's IP address
+
+optional arguments:
+  -h, --help            show this help message and exit
+  -p PASSWORD, --password PASSWORD
+                        The device's root user password
+  -o OUTPUT, --output OUTPUT
+                        Where to save the dumped blob
+  --non-interactive     Don't interactively ask for missing value (assume default if missing)
+```
 
 ## Ugh, I don't like standalone binaries?
 Fine. Clone this repo, install the dependencies with `poetry install` or `pip install .`, and run `python3 -m extraire`
