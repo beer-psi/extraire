@@ -21,6 +21,22 @@ packages = [
     { include = "extraire" }
 ]
 
+[tool.black]
+target-version = ['py36', 'py37']
+include = '\.spec?$'
+extend-exclude = '''
+/(
+  extraire\/.+\.min\.py
+  | .+\.min\.py
+  | build
+  | dist
+  | env
+)/
+'''
+
+[tool.isort]
+profile = "black"
+
 [tool.poetry.scripts]
 extraire = "extraire.__main__:main"
 
@@ -34,7 +50,8 @@ rich = "^12.0.1"
 pyinstaller = "^4.10"
 black = "^22.1.0"
 flake8 = "^4.0.1"
-twine = "^3.8.0"
+isort = "^5.10.1"
+pre-commit = "^2.17.0"
 
 [tool.poetry.urls]
 "Bug Tracker" = "https://github.com/beerpiss/extraire/issues"
