@@ -1,28 +1,32 @@
 import argparse
 import os
 import plistlib
-import paramiko.ssh_exception
-import pyasn1.codec.der.decoder
-import pyasn1.type.univ
 import socket
 import tempfile
-from .pyimg4 import IMG4
+from typing import Optional, Tuple, Union
+
+import paramiko.ssh_exception
+import pyasn1.codec.der.decoder
 from fabric import Connection
 from rich import print
 from rich.prompt import Prompt
-from typing import Optional, Tuple, Union
+
+from .pyimg4 import IMG4
 
 
 def introduction():
     print("Welcome to Extraire")
     print(
-        "This program will dump blobs from your [bold]jailbroken[/bold] iOS device and copy it to your computer."
+        "This program will dump blobs from your [bold]jailbroken[/bold] iOS device and "
+        "copy it to your computer."
     )
     print(
-        "Depending on the blob, you might [bold]not[/bold] be able to use it without a bootROM exploit (e.g. checkm8)."
+        "Depending on the blob, you might [bold]not[/bold] be able to use it without a "
+        "bootROM exploit (e.g. checkm8)."
     )
     print(
-        "Refer to https://ios.cfw.guide/saving-blobs/#saving-onboard-blobs for more information.",
+        "Refer to https://ios.cfw.guide/saving-blobs/#saving-onboard-blobs for more "
+        "information.",
         end="\n\n",
     )
 
@@ -32,9 +36,10 @@ def interactive_input(
     password: Optional[str] = None,
     port: Optional[int] = None,
 ) -> Tuple[str, str, int]:
-    if None in (address, password, port) or '' in (address, password, port):
+    if None in (address, password, port) or "" in (address, password, port):
         print(
-            "Options given out in [bold blue](blue parentheses)[/bold blue] are default values and will be used if you haven't specified an option.",
+            "Options given out in [bold blue](blue parentheses)[/bold blue] are "
+            "default values and will be used if you haven't specified an option.",
             end="\n\n",
         )
 
@@ -98,7 +103,8 @@ def dump_raw_apticket(address: str, password: str, port: int) -> Union[IMG4, boo
             return False
         except ValueError:
             print(
-                f"[red]Please specify the port separately. {address} is not a valid input.[/red]"
+                f"[red]Please specify the port separately. {address} is not a valid "
+                "input.[/red]"
             )
             return False
 
@@ -110,7 +116,11 @@ def dump_raw_apticket(address: str, password: str, port: int) -> Union[IMG4, boo
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument(
-        "host_port", metavar="HOST[:PORT]", nargs="?", help="The device's IP address", default=""
+        "host_port",
+        metavar="HOST[:PORT]",
+        nargs="?",
+        help="The device's IP address",
+        default="",
     )
     parser.add_argument(
         "-p", "--password", help="The device's root user password", required=False
@@ -135,7 +145,10 @@ def main():
     introduction()
     if args.non_interactive:
         if not address:
-            print("[red]Device address not specified, and user asked for non-interactive mode. Exiting.[/red]")
+            print(
+                "[red]Device address not specified, and user asked for non-interactive "
+                "mode. Exiting.[/red]"
+            )
             return 1
         password = args.password or "alpine"
     else:
@@ -153,15 +166,20 @@ def main():
     print(f"[green]Done! Your blob has been saved to {args.output}[/green]")
     if 0x8020 <= int(img4.im4m["CHIP"]) < 0x8900:
         print(
-            "[yellow][bold]Note:[/bold] Your device is probably an A12+ device.[/yellow]"
+            "[yellow][bold]Note:[/bold] Your device is probably an A12+ device."
+            "[/yellow]"
         )
         print(
-            "[yellow]If you updated to your current version using the Settings app over-the-air, you [bold]cannot[/bold] use this blob, even with a jailbreak.[/yellow]"
+            "[yellow]If you updated to your current version using the Settings app "
+            "over-the-air, you [bold]cannot[/bold] use this blob, even with a "
+            "jailbreak.[/yellow]"
         )
         print(
-            "[yellow]Refer to https://ios.cfw.guide/saving-blobs/#ota-onboard-blobs for more information.[/yellow]"
+            "[yellow]Refer to https://ios.cfw.guide/saving-blobs/#ota-onboard-blobs "
+            "for more information.[/yellow]"
         )
         print(
-            "[yellow]Determine your blob type with https://verify.shsh.host or https://tsssaver.1conan.com/check or img4tool.[/yellow]"
+            "[yellow]Determine your blob type with https://verify.shsh.host or "
+            "https://tsssaver.1conan.com/check or img4tool.[/yellow]"
         )
     return 0

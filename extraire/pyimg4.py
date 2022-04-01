@@ -1,8 +1,8 @@
+from typing import Any, Union
+
 import pyasn1.codec.der.decoder
 import pyasn1.codec.der.encoder
 import pyasn1.type.univ
-from typing import Union, Any
-
 
 __all__ = ["IMG4", "IM4R", "IM4M"]
 

@@ -1,0 +1,23 @@
+repos:
+- repo: https://github.com/pre-commit/pre-commit-hooks
+  rev: v4.1.0
+  hooks:
+  - id: trailing-whitespace
+    args: [--markdown-linebreak-ext=md]
+- repo: https://github.com/floatingpurr/sync_with_poetry
+  rev: 0.2.0
+  hooks:
+    - id: sync_with_poetry
+      args: []
+- repo: https://github.com/psf/black
+  rev: 22.3.0
+  hooks:
+    - id: black
+- repo: https://github.com/PyCQA/flake8
+  rev: 4.0.1
+  hooks:
+   - id: flake8
+- repo: https://github.com/PyCQA/isort
+  rev: 5.10.1
+  hooks:
+    - id: isort

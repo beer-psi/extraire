@@ -1,7 +1,8 @@
 from sys import exit
-from rich import print
-from extraire.extraire import main
 
+from rich import print
+
+from extraire.extraire import main
 
 if __name__ == "__main__":
     try:
