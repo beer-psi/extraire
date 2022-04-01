@@ -5,6 +5,12 @@ description = "Dumps onboard SHSH blobs with a valid generator for jailbroken iO
 authors = ["beerpiss <lacvtg.a1.2023@gmail.com>"]
 license = "0BSD"
 readme = "README.md"
+packages = [
+    { include = "extraire" }
+]
+
+[tool.poetry.scripts]
+extraire = "extraire.__main__:main"
 
 [tool.poetry.dependencies]
 python = ">=3.6.2,<3.11"
@@ -18,6 +24,9 @@ black = "^22.1.0"
 python-minifier = "^2.5.0"
 flake8 = "^4.0.1"
 twine = "^3.8.0"
+
+[tool.poetry.urls]
+"Bug Tracker" = "https://github.com/beerpiss/extraire/issues"
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]
