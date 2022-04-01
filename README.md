@@ -50,8 +50,10 @@ optional arguments:
   --non-interactive     Don't interactively ask for missing value (assume default if missing)
 ```
 
-## Ugh, I don't like standalone binaries?
-Fine. Clone this repo, install the dependencies with `poetry install` or `pip install .`, and run `python3 -m extraire`
+## Running/building from source
+Clone this repo, install the dependencies with `poetry install` or `pip install .`, and run `python3 -m extraire`
+
+To build a wheel, do `poetry build`.
 
 ## Credits
 [tihmstar](https://github.com/tihmstar): without his [img4tool](https://github.com/tihmstar/img4tool) code I wouldn't be able to write code for dealing with IMG4s in Python.
