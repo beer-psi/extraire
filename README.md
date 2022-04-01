@@ -1,4 +1,4 @@
-<h1 align="center">Extraire</h2>
+<h1 align="center">extraire</h1>
 
 <p align="center">
 <a href="https://github.com/beerpiss/extraire/actions"><img alt="Actions Status" src="https://github.com/beerpiss/extraire/actions/workflows/build.yaml/badge.svg"></a>
@@ -6,6 +6,8 @@
 <a href="https://github.com/beerpiss/extraire/blob/trunk/LICENSE"><img alt="License: 0BSD" src="https://img.shields.io/static/v1?label=License&message=0BSD&color=brightgreen"></a>
 <img alt="Supported Python versions: 3.6.2, 3.7, 3.8, 3.9, 3.10" src="https://img.shields.io/badge/python-3.6.2%20%7C%203.7%20%7C%203.8%20%7C%203.9%20%7C%203.10-blue">
 </p>
+
+> extraire (verb): to extract
 
 Simple program to dump onboard SHSH blobs with a valid generator for **jailbroken** iOS devices. Supports Windows, macOS and Linux.
 
