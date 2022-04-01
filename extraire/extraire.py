@@ -13,11 +13,7 @@ from rich.prompt import Prompt
 from typing import Optional, Tuple, Union
 
 
-def interactive_input(
-    address: Optional[str] = None,
-    password: Optional[str] = None,
-    port: Optional[int] = None,
-) -> Tuple[str, str, int]:
+def introduction():
     print("Welcome to Extraire")
     print(
         "This program will dump blobs from your [bold]jailbroken[/bold] iOS device and copy it to your computer."
@@ -29,13 +25,20 @@ def interactive_input(
         "Refer to https://ios.cfw.guide/saving-blobs/#saving-onboard-blobs for more information.",
         end="\n\n",
     )
-    if None in (address, password, port):
+
+
+def interactive_input(
+    address: Optional[str] = None,
+    password: Optional[str] = None,
+    port: Optional[int] = None,
+) -> Tuple[str, str, int]:
+    if None in (address, password, port) or '' in (address, password, port):
         print(
             "Options given out in [bold blue](blue parentheses)[/bold blue] are default values and will be used if you haven't specified an option.",
             end="\n\n",
         )
 
-    if address is None:
+    if not address:
         while True:
             _address = Prompt.ask("[bold]Enter the device's IP address[/bold]")
             if _address == "":
@@ -45,7 +48,7 @@ def interactive_input(
                 break
         print("")
 
-    if password is None:
+    if not password:
         print(
             "Please note that it is normal for the password to [bold]not[/bold] appear."
         )
@@ -54,7 +57,7 @@ def interactive_input(
         )
         print("")
 
-    if port is None:
+    if not port:
         _port = int(Prompt.ask("[bold]Enter the SSH port[/bold]", default="22"))
 
     return (address or _address, password or _password, port or _port)
@@ -107,7 +110,7 @@ def dump_raw_apticket(address: str, password: str, port: int) -> Union[IMG4, boo
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument(
-        "host_port", metavar="HOST[:PORT]", nargs="?", help="The device's IP address"
+        "host_port", metavar="HOST[:PORT]", nargs="?", help="The device's IP address", default=""
     )
     parser.add_argument(
         "-p", "--password", help="The device's root user password", required=False
@@ -123,20 +126,20 @@ def main():
     )
     args = parser.parse_args()
 
+    [address, port] = (
+        args.host_port.split(":", 2)
+        if ":" in args.host_port
+        else [args.host_port, 22 if args.non_interactive else None]
+    )
+
+    introduction()
     if args.non_interactive:
-        if args.host_port is None:
-            print(
-                "[red]Device IP address not specified, and user asked for non-interactive mode. Exiting.[/red]"
-            )
+        if not address:
+            print("[red]Device address not specified, and user asked for non-interactive mode. Exiting.[/red]")
             return 1
-        args.password = "alpine" if args.password is None else args.password
-    if args.host_port is not None:
-        [address, port] = (
-            args.host_port.split(":", 2)
-            if ":" in args.host_port
-            else [args.host_port, 22 if args.non_interactive else None]
-        )
-    address, password, port = interactive_input(address, args.password, port)
+        password = args.password or "alpine"
+    else:
+        address, password, port = interactive_input(address, args.password, port)
 
     img4 = dump_raw_apticket(address, password, port)
     if not img4:
