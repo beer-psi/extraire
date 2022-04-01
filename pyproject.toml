@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "extraire"
-version = "0.1.3"
+version = "0.1.4"
 description = "Dumps onboard SHSH blobs with a valid generator for jailbroken iOS devices"
 authors = ["beerpiss <lacvtg.a1.2023@gmail.com>"]
 license = "0BSD"
