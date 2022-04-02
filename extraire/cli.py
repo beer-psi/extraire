@@ -49,6 +49,9 @@ def interactive_input(
                 continue
             else:
                 break
+        [_address, port] = (
+            _address.split(":", 2) if ":" in _address else [_address, None]
+        )
         print("")
 
     if not password:
@@ -81,6 +84,7 @@ def dump_raw_apticket(address: str, password: str, port: int) -> Union[IMG4, boo
             ) as c:
                 c.run("dd if=/dev/disk1 of=dump.raw bs=256 count=$((0x4000))")
                 c.get("dump.raw", rawdump)
+                c.run("rm -f dump.raw")
         except paramiko.ssh_exception.NoValidConnectionsError:
             print("[red]Could not connect to device.[/red]")
             return False

@@ -4,7 +4,7 @@ from sys import exit
 
 from rich import print
 
-from extraire.extraire import dump_raw_apticket, interactive_input, introduction
+from extraire.cli import dump_raw_apticket, interactive_input, introduction
 
 
 def main():
