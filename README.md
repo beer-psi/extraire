@@ -3,21 +3,21 @@
 <p align="center">
 <a href="https://github.com/beerpiss/extraire/actions">
     <img alt="Actions Status"
-      src="https://github.com/beerpiss/extraire/actions/workflows/build.yaml/badge.svg">
+      src="https://img.shields.io/github/workflow/status/beerpiss/extraire/build%20extraire?style=flat-square">
 </a>
 <a href="https://github.com/psf/black">
     <img alt="Code style: black"
-         src="https://img.shields.io/badge/code%20style-black-000000.svg">
+         src="https://img.shields.io/badge/code%20style-black-000000.svg?style=flat-square">
 </a>
 <a href="https://github.com/beerpiss/extraire/blob/trunk/LICENSE">
     <img alt="License: 0BSD"
-    src="https://img.shields.io/static/v1?label=License&message=0BSD&color=brightgreen">
+    src="https://img.shields.io/static/v1?label=License&message=0BSD&color=brightgreen&style=flat-square">
 </a>
 <a href="https://pypi.org/project/extraire/">
-    <img alt="PyPI" src="https://img.shields.io/pypi/v/extraire">
+    <img alt="PyPI" src="https://img.shields.io/pypi/v/extraire?style=flat-square">
 </a>
 <img alt="Supported Python versions: 3.6.2, 3.7, 3.8, 3.9, 3.10"
-     src="https://img.shields.io/pypi/pyversions/extraire">
+     src="https://img.shields.io/pypi/pyversions/extraire?style=flat-square">
 </p>
 
 > extraire (verb): to extract
